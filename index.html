@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bijani OS | AI Dashboard</title>
+    <title>Femto AI | Neural Dashboard</title>
+    <!-- Fixed Marked.js script for AI text formatting -->
     <script src="https://jsdelivr.net"></script>
     <style>
         :root {
@@ -23,15 +24,16 @@
 
         /* SIDEBAR */
         nav { width: 280px; background: var(--sidebar-glass); backdrop-filter: blur(20px); border-right: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; padding: 40px 24px; }
-        .brand { font-size: 1.2rem; font-weight: 800; letter-spacing: 2px; margin-bottom: 60px; }
+        .brand { font-size: 1.4rem; font-weight: 800; letter-spacing: 1px; margin-bottom: 60px; color: #fff; display: flex; align-items: center; gap: 8px; }
+        .brand span { color: var(--accent-glow); }
         .section-label { font-size: 0.65rem; color: var(--text-dim); text-transform: uppercase; margin: 30px 0 15px 10px; }
         
         .nav-btn { 
             padding: 16px 20px; border-radius: 16px; margin-bottom: 12px; cursor: pointer;
             display: flex; align-items: center; transition: 0.3s; color: var(--text-dim); border: 1px solid transparent;
         }
-        .nav-btn:hover:not(.locked) { background: var(--panel); color: #fff; }
-        .nav-btn.active { background: linear-gradient(135deg, var(--accent-glow), var(--accent-purple)); color: #020617; font-weight: 700; }
+        .nav-btn:hover:not(.locked) { background: var(--panel); color: #fff; border-color: rgba(255,255,255,0.1); }
+        .nav-btn.active { background: linear-gradient(135deg, var(--accent-glow), var(--accent-purple)); color: #020617; font-weight: 700; box-shadow: 0 0 20px rgba(56, 189, 248, 0.2); }
         .nav-btn.locked { opacity: 0.3; cursor: not-allowed; }
 
         /* MAIN CONTENT AREA */
@@ -41,9 +43,10 @@
 
         /* INTELLIGENCE HUB (CHAT) */
         #chat-window { flex: 1; overflow-y: auto; padding: 40px 12%; display: flex; flex-direction: column; gap: 20px; }
-        .bubble { max-width: 80%; padding: 18px 22px; border-radius: 20px; line-height: 1.6; }
+        .bubble { max-width: 85%; padding: 18px 22px; border-radius: 20px; line-height: 1.6; font-size: 0.95rem; }
         .user { align-self: flex-end; background: var(--panel); border: 1px solid rgba(255,255,255,0.1); }
         .ai { align-self: flex-start; background: rgba(56, 189, 248, 0.05); border: 1px solid rgba(56, 189, 248, 0.2); }
+        .ai p { margin: 0 0 10px 0; }
 
         /* DATA VAULT (UPLOAD) */
         .vault-container { padding: 60px 12%; text-align: center; }
@@ -51,13 +54,14 @@
             border: 2px dashed rgba(255,255,255,0.1); border-radius: 30px; padding: 60px;
             background: var(--panel); transition: 0.3s; cursor: pointer;
         }
-        .upload-box:hover { border-color: var(--accent-glow); background: rgba(56, 189, 248, 0.05); }
+        .upload-box:hover { border-color: var(--accent-glow); background: rgba(56, 189, 248, 0.05); transform: translateY(-2px); }
 
         /* INPUTS */
-        .footer { padding: 20px 12% 40px; }
-        .input-wrapper { background: rgba(30, 41, 59, 0.6); border-radius: 24px; padding: 8px 25px; display: flex; align-items: center; border: 1px solid rgba(255,255,255,0.05); }
-        input { flex: 1; background: transparent; border: none; color: #fff; outline: none; padding: 15px 0; }
-        .action-btn { background: #fff; color: #000; border: none; padding: 12px 28px; border-radius: 18px; cursor: pointer; font-weight: 800; }
+        .footer { padding: 20px 12% 40px; background: linear-gradient(transparent, var(--bg)); }
+        .input-wrapper { background: rgba(30, 41, 59, 0.6); border-radius: 24px; padding: 8px 12px 8px 25px; display: flex; align-items: center; border: 1px solid rgba(255,255,255,0.05); }
+        input { flex: 1; background: transparent; border: none; color: #fff; outline: none; padding: 15px 0; font-size: 1rem; }
+        .action-btn { background: #fff; color: #000; border: none; padding: 12px 28px; border-radius: 18px; cursor: pointer; font-weight: 800; transition: 0.2s; }
+        .action-btn:hover { background: var(--accent-glow); transform: scale(1.05); }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -65,7 +69,7 @@
 <body>
 
     <nav>
-        <div class="brand">Bijani // OS</div>
+        <div class="brand">Femto<span>AI</span></div>
         <div class="section-label">Core Intelligence</div>
         <div class="nav-btn active" onclick="switchView('chat-view', this)">Intelligence Hub</div>
         <div class="nav-btn" onclick="switchView('vault-view', this)">Data Vault</div>
@@ -77,12 +81,12 @@
         <!-- CHAT VIEW -->
         <div id="chat-view" class="view active">
             <div id="chat-window">
-                <div class="bubble ai">System ready. Awaiting secure inquiry...</div>
+                <div class="bubble ai">System ready. I am Femto AI. How can I assist you with your knowledge base today?</div>
             </div>
             <div class="footer">
                 <div class="input-wrapper">
                     <input type="text" id="query" placeholder="Ask your data anything..." onkeypress="if(event.key==='Enter') execute()">
-                    <button class="action-btn" onclick="execute()">PROCEED</button>
+                    <button class="action-btn" id="send-btn" onclick="execute()">PROCEED</button>
                 </div>
             </div>
         </div>
@@ -91,14 +95,14 @@
         <div id="vault-view" class="view">
             <div class="vault-container">
                 <h2>Knowledge Ingestion</h2>
-                <p style="color: var(--text-dim)">Upload PDF files to train your local Vector Database.</p>
+                <p style="color: var(--text-dim)">Upload PDF files to sync with Femto's neural network.</p>
                 <div class="upload-box" onclick="document.getElementById('fileInput').click()">
                     <div style="font-size: 3rem; margin-bottom: 20px;">📁</div>
                     <h3>Drop your files here</h3>
-                    <p>or click to browse from computer</p>
+                    <p>Supported formats: .pdf, .txt</p>
                     <input type="file" id="fileInput" hidden accept=".pdf,.txt" onchange="handleUpload()">
                 </div>
-                <div id="status-list" style="margin-top: 30px; text-align: left; color: var(--accent-glow);"></div>
+                <div id="status-list" style="margin-top: 30px; text-align: left; color: var(--accent-glow); font-family: monospace;"></div>
             </div>
         </div>
     </main>
@@ -106,11 +110,8 @@
     <script>
         // VIEW SWITCHER LOGIC
         function switchView(viewId, btn) {
-            // Update Buttons
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-
-            // Update Views
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.getElementById(viewId).classList.add('active');
         }
@@ -119,11 +120,15 @@
         async function execute() {
             const input = document.getElementById('query');
             const win = document.getElementById('chat-window');
+            const btn = document.getElementById('send-btn');
+            
             if(!input.value.trim()) return;
 
             const text = input.value;
             win.innerHTML += `<div class="bubble user">${text}</div>`;
             input.value = "";
+            input.disabled = true;
+            btn.innerText = "THINKING...";
 
             try {
                 const res = await fetch("http://localhost:11434/api/generate", {
@@ -131,18 +136,25 @@
                     body: JSON.stringify({ model: "llama3.1", prompt: text, stream: false })
                 });
                 const data = await res.json();
+                // marked.parse handles the bolding, lists, and code blocks from the AI
                 win.innerHTML += `<div class="bubble ai">${marked.parse(data.response)}</div>`;
             } catch (e) {
-                win.innerHTML += `<div class="bubble ai" style="color:red">Connect Error: Check Ollama.</div>`;
+                win.innerHTML += `<div class="bubble ai" style="color:#f87171">Connection Error: Ensure Ollama is running with CORS enabled.</div>`;
+            } finally {
+                input.disabled = false;
+                btn.innerText = "PROCEED";
+                win.scrollTop = win.scrollHeight;
             }
-            win.scrollTop = win.scrollHeight;
         }
 
-        // UPLOAD PLACEHOLDER
+        // UPLOAD LOGIC
         function handleUpload() {
-            const file = document.getElementById('fileInput').files[0];
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
             const list = document.getElementById('status-list');
-            list.innerHTML += `<div>● Preparing to ingest: <b>${file.name}</b>... (Ready for Python Backend)</div>`;
+            if(file) {
+                list.innerHTML += `<div>[SYSTEM]: Ingesting ${file.name}... Ready for Vectorization.</div>`;
+            }
         }
     </script>
 </body>
