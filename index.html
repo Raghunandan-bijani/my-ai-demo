@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bijani OS | AI Dashboard</title>
+    <!-- Marked.js for beautiful AI formatting -->
+    <script src="https://jsdelivr.net"></script>
     <style>
         :root {
             --bg: #020617;
@@ -23,84 +25,55 @@
             color: #f8fafc; margin: 0; display: flex; height: 100vh; overflow: hidden;
         }
 
-        /* SIDEBAR */
         nav { 
             width: 280px; background: var(--sidebar-glass); backdrop-filter: blur(20px);
             border-right: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; padding: 40px 24px;
         }
 
         .brand { font-size: 1.2rem; font-weight: 800; letter-spacing: 2px; margin-bottom: 60px; color: #fff; }
-        
         .section-label { font-size: 0.65rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.15rem; margin: 30px 0 15px 10px; }
 
         .nav-btn { 
             padding: 16px 20px; border-radius: 16px; margin-bottom: 12px; cursor: pointer;
-            display: flex; align-items: center; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex; align-items: center; transition: 0.3s ease;
             background: transparent; border: 1px solid transparent; color: var(--text-dim);
         }
 
-        .nav-btn:hover { 
-            background: var(--panel); color: #fff; transform: scale(1.02);
-            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
-            border-color: rgba(255,255,255,0.1);
-        }
-
-        .nav-btn.active { 
-            background: linear-gradient(135deg, var(--accent-glow), var(--accent-purple));
-            color: #020617; font-weight: 700; border: none;
-            box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
-        }
-
-        .nav-btn.locked { opacity: 0.3; cursor: not-allowed; pointer-events: none; }
+        .nav-btn:hover:not(.locked) { background: var(--panel); color: #fff; border-color: rgba(255,255,255,0.1); }
+        .nav-btn.active { background: linear-gradient(135deg, var(--accent-glow), var(--accent-purple)); color: #020617; font-weight: 700; }
+        .nav-btn.locked { opacity: 0.3; cursor: not-allowed; }
         
-        /* CHAT INTERFACE */
         main { flex: 1; display: flex; flex-direction: column; position: relative; }
+        #chat-window { flex: 1; overflow-y: auto; padding: 40px 12%; display: flex; flex-direction: column; gap: 25px; }
 
-        #chat-window { 
-            flex: 1; overflow-y: auto; padding: 60px 12%; display: flex; flex-direction: column; gap: 30px;
-            scroll-behavior: smooth;
-        }
-
-        .bubble { 
-            max-width: 80%; padding: 20px 24px; border-radius: 24px; line-height: 1.6; font-size: 0.95rem;
-            backdrop-filter: blur(10px); animation: slideUp 0.5s ease forwards;
-        }
+        .bubble { max-width: 85%; padding: 18px 22px; border-radius: 20px; line-height: 1.6; font-size: 0.95rem; animation: slideUp 0.4s ease forwards; }
         .user { align-self: flex-end; background: var(--panel); border: 1px solid rgba(255,255,255,0.1); }
         .ai { align-self: flex-start; background: rgba(56, 189, 248, 0.05); border: 1px solid rgba(56, 189, 248, 0.2); }
-
-        /* INPUT */
-        .footer { padding: 40px 12%; background: linear-gradient(to top, var(--bg), transparent); }
         
+        /* Markdown styling inside AI bubble */
+        .ai p { margin: 0 0 10px 0; }
+        .ai code { background: rgba(255,255,255,0.1); padding: 2px 5px; border-radius: 4px; }
+
+        .footer { padding: 20px 12% 40px; background: linear-gradient(to top, var(--bg), transparent); }
         .input-wrapper { 
-            background: rgba(30, 41, 59, 0.6); border-radius: 24px; padding: 10px 10px 10px 30px;
+            background: rgba(30, 41, 59, 0.6); border-radius: 24px; padding: 8px 8px 8px 25px;
             display: flex; align-items: center; border: 1px solid rgba(255,255,255,0.05);
-            transition: 0.3s;
         }
 
-        .input-wrapper:focus-within { border-color: var(--accent-glow); box-shadow: 0 0 40px -10px rgba(56, 189, 248, 0.2); }
+        input { flex: 1; background: transparent; border: none; color: #fff; outline: none; font-size: 1rem; }
+        .action-btn { background: #fff; color: #000; border: none; padding: 12px 28px; border-radius: 18px; cursor: pointer; font-weight: 800; }
+        .action-btn:disabled { background: #444; cursor: not-allowed; }
 
-        input { flex: 1; background: transparent; border: none; color: #fff; outline: none; font-size: 1rem; padding: 15px 0; }
-        
-        .action-btn { 
-            background: #fff; color: #000; border: none; padding: 12px 28px; 
-            border-radius: 18px; cursor: pointer; font-weight: 800; font-size: 0.8rem;
-            transition: 0.3s;
-        }
-        .action-btn:hover { background: var(--accent-glow); transform: translateY(-2px); }
-
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
     <nav>
         <div class="brand">Bijani // OS</div>
-        
         <div class="section-label">Core Intelligence</div>
         <div class="nav-btn active">Intelligence Hub</div>
         <div class="nav-btn">Data Vault</div>
-
         <div class="section-label">Creative Extensions</div>
         <div class="nav-btn locked">Vision Studio</div>
         <div class="nav-btn locked">Acoustic Synth</div>
@@ -113,35 +86,67 @@
 
         <div class="footer">
             <div class="input-wrapper">
-                <input type="text" id="query" placeholder="Submit a secure request..." onkeypress="if(event.key==='Enter') execute()">
-                <button class="action-btn" onclick="execute()">PROCEED</button>
+                <input type="text" id="query" placeholder="Submit a secure request..." autocomplete="off">
+                <button id="send-btn" class="action-btn" onclick="execute()">PROCEED</button>
             </div>
         </div>
     </main>
 
     <script>
-        async function execute() {
-            const el = document.getElementById('query');
-            const win = document.getElementById('chat-window');
-            if(!el.value.trim()) return;
+        const chatWindow = document.getElementById('chat-window');
+        const queryInput = document.getElementById('query');
+        const sendBtn = document.getElementById('send-btn');
 
-            const val = el.value;
-            win.innerHTML += `<div class="bubble user">${val}</div>`;
-            el.value = "";
-            win.scrollTop = win.scrollHeight;
+        // Handle Enter Key
+        queryInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') execute();
+        });
+
+        async function execute() {
+            const prompt = queryInput.value.trim();
+            if (!prompt) return;
+
+            // UI Updates
+            appendMessage(prompt, 'user');
+            queryInput.value = "";
+            setLoading(true);
 
             try {
-                // Connecting to your local LLM backend
-                const res = await fetch("http://localhost:11434/api/generate", {
+                const response = await fetch("http://localhost:11434/api/generate", {
                     method: "POST",
-                    body: JSON.stringify({ model: "llama3.1", prompt: val, stream: false })
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ 
+                        model: "llama3.1", 
+                        prompt: prompt, 
+                        stream: false 
+                    })
                 });
-                const data = await res.json();
-                win.innerHTML += `<div class="bubble ai">${data.response}</div>`;
+
+                if (!response.ok) throw new Error("Backend Offline");
+
+                const data = await response.json();
+                appendMessage(data.response, 'ai');
             } catch (e) {
-                win.innerHTML += `<div class="bubble ai" style="border-color: #f87171; color: #f87171;">ERR: Secure connection to local node failed. Check system logs.</div>`;
+                appendMessage("**Connectivity Error:** Check if Ollama is running and CORS is enabled via `OLLAMA_ORIGINS='*'` environment variable.", 'ai');
+            } finally {
+                setLoading(false);
+                chatWindow.scrollTop = chatWindow.scrollHeight;
             }
-            win.scrollTop = win.scrollHeight;
+        }
+
+        function appendMessage(text, side) {
+            const div = document.createElement('div');
+            div.className = `bubble ${side}`;
+            // Use marked for AI side, simple text for user side
+            div.innerHTML = side === 'ai' ? marked.parse(text) : document.createTextNode(text).textContent;
+            chatWindow.appendChild(div);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        function setLoading(isLoading) {
+            sendBtn.disabled = isLoading;
+            sendBtn.textContent = isLoading ? "THINKING..." : "PROCEED";
+            queryInput.disabled = isLoading;
         }
     </script>
 </body>
